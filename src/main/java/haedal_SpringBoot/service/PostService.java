@@ -4,6 +4,7 @@ import haedal_SpringBoot.domain.Post;
 import haedal_SpringBoot.domain.User;
 import haedal_SpringBoot.dto.PostResponseDto;
 import haedal_SpringBoot.dto.UserSimpleResponseDto;
+import haedal_SpringBoot.repository.LikeRepository;
 import haedal_SpringBoot.repository.PostRepository;
 import haedal_SpringBoot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +19,15 @@ public class PostService {
   private final UserRepository userRepository;
   private final UserService userService;
   private final ImageService imageService;
-//  private final LikeRepository likeRepository;
+  private final LikeRepository likeRepository;
 
   @Autowired
-  public PostService(PostRepository postRepository, UserRepository userRepository, UserService userService, ImageService imageService) {
+  public PostService(PostRepository postRepository, UserRepository userRepository, UserService userService, ImageService imageService,LikeRepository likeRepository) {
     this.postRepository = postRepository;
     this.userRepository = userRepository;
     this.userService = userService;
     this.imageService = imageService;
-//    this.likeRepository = likeRepository;
+    this.likeRepository = likeRepository;
   }
   public void savePost(Post post){
     Post saved = postRepository.save(post);
@@ -52,11 +53,13 @@ public class PostService {
         userSimpleResponseDto,
         imageData,
         post.getContent(),
-        0L,
-        false,
+        likeRepository.countByPost(post),
+        likeRepository.existsByUserAndPost(currentUser, post),
         post.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"))
     );
   }
+
+
 
 
 }

@@ -38,14 +38,14 @@ public class User{
   @OneToMany(mappedBy = "user")
   private List<Post> posts;
 
-  //@OneToMany(mappedBy = "user")
-  //private List<Like> likes;
+  @OneToMany(mappedBy = "user")
+  private List<Like> likes;
 
-  //@OneToMany(mappedBy = "follower")
-  //private List<Follow> followings;
+  @OneToMany(mappedBy = "follower")
+  private List<Follow> followings;
 
-  //@OneToMany(mappedBy =  "following")
-  //private List<Follow> followers;
+  @OneToMany(mappedBy =  "following")
+  private List<Follow> followers;
 
   public User(String username, String password, String name){ //생성자
     this.username = username;

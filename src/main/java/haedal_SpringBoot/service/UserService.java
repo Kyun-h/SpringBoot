@@ -4,6 +4,7 @@ import haedal_SpringBoot.domain.User;
 import haedal_SpringBoot.dto.UserDetailResponseDto;
 import haedal_SpringBoot.dto.UserSimpleResponseDto;
 import haedal_SpringBoot.dto.UserUpdateRequestDto;
+import haedal_SpringBoot.repository.FollowRepository;
 import haedal_SpringBoot.repository.PostRepository;
 import haedal_SpringBoot.repository.UserRepository;
 //패키지명이 다를 시 본인 패키지명으로 작성해야 오류가 안납니다.
@@ -20,12 +21,14 @@ public class UserService {
   private final UserRepository userRepository;
   private final ImageService imageService;
   private final PostRepository postRepository;
+  private final FollowRepository followRepository;
 
   @Autowired
-  public UserService(UserRepository userRepository, ImageService imageService,PostRepository postRepository) {
+  public UserService(UserRepository userRepository, ImageService imageService,PostRepository postRepository,FollowRepository followRepository) {
     this.userRepository = userRepository;
     this.imageService = imageService;
     this.postRepository = postRepository;
+    this.followRepository = followRepository;
   }
 
   public UserSimpleResponseDto saveUser(User newUser) {
@@ -47,7 +50,7 @@ public class UserService {
         targetUser.getUsername(),
         targetUser.getName(),
         imageData,
-        false
+        followRepository.existsByFollowerAndFollowing(currentUser, targetUser)
     );
   }
 
@@ -105,8 +108,8 @@ public class UserService {
         targetUser.getBio(),
         targetUser.getJoinedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")),
         postRepository.countByUser(targetUser),
-        0L,
-        0L
+        followRepository.countByFollowing(targetUser),
+        followRepository.countByFollower(targetUser)
     );
   }
 }
